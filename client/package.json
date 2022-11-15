@@ -6,7 +6,8 @@
     "build": "run-p type-check build-only",
     "preview": "vite preview",
     "build-only": "vite build",
-    "type-check": "vue-tsc --noEmit"
+    "type-check": "vue-tsc --noEmit",
+    "typegen": "npx pocketbase-typegen --db ../server/pb_data/data.db --out ./src/types/pocketbase-types.ts"
   },
   "dependencies": {
     "beercss": "^2.3.0",
