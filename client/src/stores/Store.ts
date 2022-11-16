@@ -23,8 +23,7 @@ export const useStore = defineStore('main', {
     setError(message: string, duration?: number) {
       this.error.status = true;
       this.error.message = message;
-
-
+ 
       if (duration)
         setTimeout(this.clearError, duration);
     },

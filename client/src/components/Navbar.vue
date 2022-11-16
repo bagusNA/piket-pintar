@@ -1,15 +1,14 @@
 <script setup lang="ts">
 import { RouterLink, useRouter } from 'vue-router';
-import { useAuthStore } from '@/stores/AuthStore';
 import { useStore } from '@/stores/Store';
 import ToastSuccess from './Toast/ToastSuccess.vue';
+import { pb } from '@/pocketbase';
 
 const store = useStore();
-const authStore = useAuthStore();
 const router = useRouter();
 
 const logoutAction = async () => {
-  await authStore.logout();
+  pb.authStore.clear();
   router.push({ name: 'login' });
 };
 </script>

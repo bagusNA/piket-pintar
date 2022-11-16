@@ -26,14 +26,6 @@ const isModalShown = ref(false);
       </CardSummary>
     </div>
 
-<!--    <button @click="isModalShown = !isModalShown"-->
-<!--      class="extend square round"-->
-<!--      id="btn-add"-->
-<!--    >-->
-<!--      <i>add</i>-->
-<!--      <span>Absen</span>-->
-<!--    </button>-->
-
     <button @click="() => router.push({ name: 'absent/add' })"
       class="extend square round" id="btn-add"
     >

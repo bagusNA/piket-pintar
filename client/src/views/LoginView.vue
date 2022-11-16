@@ -18,14 +18,20 @@ const form = reactive({
 
 const loginAction = async () => {
   isLoading.value = true;
-  const authData = await pb.admins.authViaEmail(
-    form.username,
-    form.password
-  )
-  isLoading.value = false;
 
-  if (!authData) return;
-  router.push({ name: 'index' });
+  try {
+    await pb.collection('users').authWithPassword(
+      form.username,
+      form.password,
+    );
+
+    router.push({ name: 'home' });
+  }
+  catch (e) {
+    store.setError(e.message);
+  }
+
+  isLoading.value = false;
 }
 </script>
 
@@ -41,8 +47,6 @@ const loginAction = async () => {
       </div>
 
       <div class="padding">
-        <!-- <h4 class="login__title">Login</h4> -->
-
         <form @submit.prevent="loginAction" method="post">
           <div class="field label border round">
             <input type="text" v-model="form.username">
