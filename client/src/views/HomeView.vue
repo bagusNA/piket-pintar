@@ -1,12 +1,41 @@
 <script setup lang="ts">
+import { reactive, ref } from 'vue';
+import { useNow } from '@vueuse/core';
+import { useAuthStore } from '@/stores/AuthStore';
+import { pb } from '@/pocketbase';
+import { useStore } from '@/stores/Store';
+import { getStudentByUserId } from '@/composables/student/getStudentByUserId';
+import type { AbsentForm } from '@/types/form';
+
 import CardSummary from '@/components/Card/CardSummary.vue';
 import CardWelcome from '@/components/Card/CardWelcome.vue';
-import Modal from '@/components/Modal.vue';
-import { ref } from 'vue';
-import { useRouter } from 'vue-router';
+import AbsenAddModal from '@/components/modals/AbsenAddModal.vue';
 
-const router = useRouter();
+const store = useStore();
+const authStore = useAuthStore();
 const isModalShown = ref(false);
+const time = useNow();
+
+const absentForm = reactive<AbsentForm>({
+  description: '',
+  time: time.value
+});
+
+const addAbsentAction = async () => {
+  const student = await getStudentByUserId(authStore.user.id);
+
+  const data = {
+    student_id: student.id,
+    time_arrived: time.value,
+    description: absentForm.description
+  }
+
+  const absent = await pb.collection('absentees').create(data);
+
+  console.log(absent);
+  isModalShown.value = false;
+  store.setSuccess("Absen berhasil disimpan!", 5000);
+}
 </script>
 
 <template>
@@ -23,16 +52,19 @@ const isModalShown = ref(false);
       </CardSummary>
     </div>
 
-    <button @click="() => router.push({ name: 'absent/add' })"
+    <button @click="isModalShown = true"
       class="extend square round" id="btn-add"
     >
       <i>add</i>
       <span>Absen</span>
     </button>
 
-    <Modal :status="isModalShown">
-      lsdfjk
-    </Modal>
+    <AbsenAddModal 
+      v-model="absentForm"
+      :show="isModalShown" 
+      :onCancel="() => isModalShown = false"
+      :onConfirm="addAbsentAction"
+    />
   </main>
 </template>
 
