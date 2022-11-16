@@ -2,20 +2,17 @@
 import CardSummary from '@/components/Card/CardSummary.vue';
 import CardWelcome from '@/components/Card/CardWelcome.vue';
 import Modal from '@/components/Modal.vue';
-import { useStore } from '@/stores/Store';
 import { ref } from 'vue';
 import { useRouter } from 'vue-router';
 
 const router = useRouter();
-const store = useStore();
-
 const isModalShown = ref(false);
 </script>
 
 <template>
   <main class="wrapper">
     <h4 class="wrapper__title">Dashboard</h4>
-    <CardWelcome name="Rahmat" />
+    <CardWelcome />
 
     <div class="cards-wrapper">
       <CardSummary title="Terlambat Hari Ini">

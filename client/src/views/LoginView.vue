@@ -3,10 +3,12 @@ import { reactive, ref } from 'vue';
 import { useRouter } from 'vue-router';
 import { pb } from '@/pocketbase';
 import { useStore } from '@/stores/Store';
+import { useAuthStore } from '@/stores/AuthStore';
 import Loading from '@/components/Loading.vue';
 import ToastError from '@/components/Toast/ToastError.vue';
 
 const store = useStore();
+const authStore = useAuthStore();
 const router = useRouter();
 
 const isLoading = ref(false);
@@ -19,26 +21,18 @@ const form = reactive({
 const loginAction = async () => {
   isLoading.value = true;
 
-  try {
-    await pb.collection('users').authWithPassword(
-      form.username,
-      form.password,
-    );
-
-    router.push({ name: 'home' });
-  }
-  catch (e) {
-    store.setError(e.message);
-  }
+  const login = await authStore.login(form.username, form.password);
 
   isLoading.value = false;
+
+  if (!login) return;
+  router.push({ name: 'home' });
 }
 </script>
 
 <template>
   <div class="wrapper">
     <article id="login" class="no-padding border small-elevate">
-      <!-- <img class="responsive small" src="/img/logo.png" > -->
       <div class="responsive small" id="login__hero">
         <div id="login__hero__content">
           <h4>Piket Pintar</h4>
