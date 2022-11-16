@@ -10,6 +10,7 @@
     "typegen": "npx pocketbase-typegen --db ../server/pb_data/data.db --out ./src/types/pocketbase-types.ts"
   },
   "dependencies": {
+    "@vueuse/core": "^9.5.0",
     "beercss": "^2.3.0",
     "pinia": "^2.0.23",
     "pocketbase": "^0.8.0-rc3",
