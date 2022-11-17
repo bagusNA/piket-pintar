@@ -30,11 +30,17 @@ export const useAuthStore = defineStore('auth', {
       let isError = false;
 
       try {
-        const authData = await pb.collection('users').authWithPassword(username, password);
-    
-        this.user = authData.record;
+        const authData = await
+            pb.collection('users')
+              .authWithPassword(username, password, {}, {
+                expand: 'role_id'
+              });
+
         this.token = authData.token;
-        
+        this.user = authData.record;
+
+        console.log(authData.record)
+
         localStorage.setItem('token', JSON.stringify(this.token));
         localStorage.setItem('user', JSON.stringify(this.user));
       }
