@@ -8,7 +8,11 @@ const route = useRoute();
 <template>
   <Navbar v-if="route.name !== 'login'" />
 
-  <RouterView />
+  <RouterView v-slot="{ Component }">
+    <Transition name="fade">
+      <component :is="Component" />
+    </Transition>
+  </RouterView>
 </template>
 
 <style>
@@ -30,6 +34,17 @@ const route = useRoute();
 
 .pointer {
   cursor: pointer;
+}
+
+.fade-enter-active,
+.fade-leave-active {
+  transition: all 0.2s;
+}
+
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0;
+  filter: blur(1rem);
 }
 
 @media only screen and (min-width: 600px) {
