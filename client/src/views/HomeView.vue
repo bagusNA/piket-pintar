@@ -30,7 +30,7 @@ const addAbsentAction = async () => {
     description: absentForm.description
   }
 
-  const absent = await pb.collection('absentees').create(data);
+  const absent = await pb.collection('absents').create(data);
 
   console.log(absent);
   isModalShown.value = false;
