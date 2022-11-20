@@ -3,6 +3,7 @@ import { onBeforeMount, ref, watch } from 'vue';
 import { useDateFormat } from '@vueuse/shared';
 import { pb } from '@/pocketbase';
 import type { Record } from 'pocketbase';
+import TeacherCard from '@/components/Card/TeacherCard.vue';
 
 interface ScheduleChoice {
   value: string,
@@ -158,16 +159,11 @@ onBeforeMount(async () => {
         <article v-if="session.schedules.length">
           <h5>{{ session.time_start }} - {{ session.time_end }}</h5>
 
-          <article v-for="schedule in session.schedules" class="no-padding">
-            <img class="responsive medium" 
-              src="#"
-            >
-            <div class="absolute bottom left right padding bottom-shadow white-text">
-              <nav>
-                <h5>{{ schedule.expand.teacher_id.name }}</h5>
-              </nav>
-            </div>
-          </article>
+          <div class="teacher-list">
+            <Suspense v-for="schedule in session.schedules">
+              <TeacherCard :teacher="schedule.expand.teacher_id" />
+            </Suspense>
+          </div>
         </article>
       </template>
     </template>
@@ -175,3 +171,19 @@ onBeforeMount(async () => {
     <a v-else-if="isLoading" class="loader medium"></a>
   </main>
 </template>
+
+<style scoped lang="scss">
+.teacher-list {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 24rem;
+
+  @media only screen and (min-width: 768px) {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  @media only screen and (min-width: 1024px) {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+</style>
