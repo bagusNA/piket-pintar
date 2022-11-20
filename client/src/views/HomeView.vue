@@ -7,6 +7,7 @@ import { pb } from '@/pocketbase';
 import { useStore } from '@/stores/Store';
 import { getStudentByUserId } from '@/composables/student/getStudentByUserId';
 import { getTodayAbsents } from "@/composables/absent/getTodayAbsents";
+import { getRole } from "@/composables/user/getRole";
 import type { AbsentForm } from '@/types/form';
 
 import CardSummary from '@/components/Card/CardSummary.vue';
@@ -15,10 +16,12 @@ import AbsenAddModal from '@/components/modals/AbsenAddModal.vue';
 
 const store = useStore();
 const authStore = useAuthStore();
+const userRole = getRole();
 const isModalShown = ref(false);
 const time = useNow();
 const clock = useDateFormat(time, "HH:mm");
 const totalTodayAbsent = ref(0);
+const totalMonthAbsent = ref(0);
 
 const absentForm = reactive<AbsentForm>({
   description: '',
@@ -41,13 +44,31 @@ const addAbsentAction = async () => {
 }
 
 const getTodayAbsent = async () => {
+  if (userRole !== 'TEACHER') return;
+
   const count = await getTodayAbsents();
 
   totalTodayAbsent.value = count.length;
 }
 
+const getMonthAbsentCount = async () => {
+  if (userRole !== 'STUDENT') return;
+
+  const date = new Date();
+  const month = date.getMonth();
+  const dateStr = useDateFormat(date.setMonth(month - 1), "YYYY-MM-DD").value;
+
+  const count = await
+    pb.collection('absents').getList(1, 50, {
+      filter: `created >= "${dateStr}"`
+    });
+
+  totalMonthAbsent.value = count.totalItems;
+}
+
 onBeforeMount(async () => {
   await getTodayAbsent();
+  await getMonthAbsentCount();
 });
 </script>
 
@@ -60,8 +81,15 @@ onBeforeMount(async () => {
     <CardWelcome />
 
     <div class="cards-wrapper">
-      <CardSummary title="Terlambat Hari Ini">
+      <CardSummary v-if="userRole === 'TEACHER'"
+        title="Terlambat Hari Ini"
+      >
         <p>{{ totalTodayAbsent }} Orang</p>
+      </CardSummary>
+      <CardSummary v-if="userRole === 'STUDENT'"
+         title="Terlambat Bulan Ini"
+      >
+        <p>{{ totalMonthAbsent }} Kali</p>
       </CardSummary>
     </div>
 
