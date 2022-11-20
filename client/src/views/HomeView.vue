@@ -32,7 +32,6 @@ const addAbsentAction = async () => {
 
   const absent = await pb.collection('absents').create(data);
 
-  console.log(absent);
   isModalShown.value = false;
   store.setSuccess("Absen berhasil disimpan!", 5000);
 }

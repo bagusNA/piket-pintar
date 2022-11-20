@@ -21,9 +21,9 @@ const router = createRouter({
       component: () => import('@/views/absent/IndexView.vue')
     },
     {
-      path: '/absent/add',
-      name: 'absent/add',
-      component: () => import('@/views/absent/AddView.vue')
+      path: '/schedule',
+      name: 'schedule',
+      component: () => import('@/views/ScheduleView.vue')
     },
   ]
 });

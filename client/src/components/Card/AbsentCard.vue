@@ -17,30 +17,30 @@ const formatTime: string = (date: Date) => {
 
 <template>
   <article v-if="absents !== []">
-      <h5>{{ title }}</h5>
-      <table class="border">
-        <thead>
-          <tr>
-            <th>Nama Siswa</th>
-            <th>Kelas</th>
-            <th>Jam Datang</th>
-            <th>Deskripsi</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr v-for="absent in absents">
-            <td>{{ absent.expand.student_id.expand.user_id.name }}</td>
-            <td>
-              {{ 
-                absent.expand.student_id.expand.school_class_id.grade + ' ' + 
-                absent.expand.student_id.expand.school_class_id.expand.specialty_id.initial + ' ' +
-                absent.expand.student_id.expand.school_class_id.number
-              }}
-            </td>
-            <td>{{ formatTime(absent.time_arrived) }}</td>
-            <td>{{ absent.description }}</td>
-          </tr>
-        </tbody>
-      </table>
+    <h5>{{ title }}</h5>
+    <table class="border">
+      <thead>
+        <tr>
+          <th>Nama Siswa</th>
+          <th>Kelas</th>
+          <th>Jam Datang</th>
+          <th>Deskripsi</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr v-for="absent in absents">
+          <td>{{ absent.expand.student_id.expand.user_id.name }}</td>
+          <td>
+            {{ 
+              absent.expand.student_id.expand.school_class_id.grade + ' ' + 
+              absent.expand.student_id.expand.school_class_id.expand.specialty_id.initial + ' ' +
+              absent.expand.student_id.expand.school_class_id.number
+            }}
+          </td>
+          <td>{{ formatTime(absent.time_arrived) }}</td>
+          <td>{{ absent.description }}</td>
+        </tr>
+      </tbody>
+    </table>
     </article> 
 </template>

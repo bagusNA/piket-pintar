@@ -27,7 +27,7 @@ const logoutAction = async () => {
       <i>history_edu</i>
       <span>Absen</span>
     </RouterLink>
-    <RouterLink to="/">
+    <RouterLink to="/schedule">
       <i>event</i>
       <span>Jadwal</span>
     </RouterLink>
@@ -46,7 +46,7 @@ const logoutAction = async () => {
       <i>history_edu</i>
       <span>Absen</span>
     </RouterLink>
-    <RouterLink to="/">
+    <RouterLink to="/schedule">
       <i>event</i>
       <span>Jadwal</span>
     </RouterLink>
