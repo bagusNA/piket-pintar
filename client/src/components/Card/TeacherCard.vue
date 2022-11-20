@@ -16,7 +16,7 @@ const url = await pb.getFileUrl(props.teacher.expand.user_id as Record, props.te
     ></div>
     <div class="absolute bottom left right padding bottom-shadow white-text">
       <nav>
-        <h5>{{ teacher.name }}</h5>
+        <h5>{{ teacher.expand.user_id.name }}</h5>
       </nav>
     </div>
   </article>

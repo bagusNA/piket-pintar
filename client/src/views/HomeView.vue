@@ -1,10 +1,12 @@
 <script setup lang="ts">
-import { reactive, ref } from 'vue';
+import {onBeforeMount, reactive, ref} from 'vue';
 import { useNow } from '@vueuse/core';
+import { useDateFormat } from "@vueuse/shared";
 import { useAuthStore } from '@/stores/AuthStore';
 import { pb } from '@/pocketbase';
 import { useStore } from '@/stores/Store';
 import { getStudentByUserId } from '@/composables/student/getStudentByUserId';
+import { getTodayAbsents } from "@/composables/absent/getTodayAbsents";
 import type { AbsentForm } from '@/types/form';
 
 import CardSummary from '@/components/Card/CardSummary.vue';
@@ -15,6 +17,8 @@ const store = useStore();
 const authStore = useAuthStore();
 const isModalShown = ref(false);
 const time = useNow();
+const clock = useDateFormat(time, "HH:mm");
+const totalTodayAbsent = ref(0);
 
 const absentForm = reactive<AbsentForm>({
   description: '',
@@ -30,24 +34,34 @@ const addAbsentAction = async () => {
     description: absentForm.description
   }
 
-  const absent = await pb.collection('absents').create(data);
+  await pb.collection('absents').create(data);
 
   isModalShown.value = false;
   store.setSuccess("Absen berhasil disimpan!", 5000);
 }
+
+const getTodayAbsent = async () => {
+  const count = await getTodayAbsents();
+
+  totalTodayAbsent.value = count.length;
+}
+
+onBeforeMount(async () => {
+  await getTodayAbsent();
+});
 </script>
 
 <template>
   <main class="wrapper">
-    <h4 class="wrapper__title">Dashboard</h4>
+    <div class="row">
+      <h4 class="wrapper__title max">Dashboard</h4>
+      <h5>{{ clock }}</h5>
+    </div>
     <CardWelcome />
 
     <div class="cards-wrapper">
       <CardSummary title="Terlambat Hari Ini">
-        <p>12 Orang</p>
-      </CardSummary>
-      <CardSummary title="Jam Piket">
-        <p>07:00 - 10:00</p>
+        <p>{{ totalTodayAbsent }} Orang</p>
       </CardSummary>
     </div>
 
