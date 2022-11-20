@@ -13,6 +13,7 @@ import type { AbsentForm } from '@/types/form';
 import CardSummary from '@/components/Card/CardSummary.vue';
 import CardWelcome from '@/components/Card/CardWelcome.vue';
 import AbsenAddModal from '@/components/modals/AbsenAddModal.vue';
+import TodayAbsentCard from '@/components/Card/TodayAbsentCard.vue';
 
 const store = useStore();
 const authStore = useAuthStore();
@@ -92,6 +93,10 @@ onBeforeMount(async () => {
         <p>{{ totalMonthAbsent }} Kali</p>
       </CardSummary>
     </div>
+
+    <Suspense>
+      <TodayAbsentCard />
+    </Suspense>
 
     <button @click="isModalShown = true"
       class="extend square round" id="btn-add"
