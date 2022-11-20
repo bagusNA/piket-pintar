@@ -1,22 +1,9 @@
-// This file was @generated using pocketbase-typegen
-
-export type IsoDateString = string
-
-export type RecordIdString = string
-
-export type UserIdString = string
-
-export type BaseRecord = {
-	id: RecordIdString
-	created: IsoDateString
-	updated: IsoDateString
-	"@collectionId": string
-	"@collectionName": string
-	"@expand"?: { [key: string]: any }
-}
+/**
+* This file was @generated using pocketbase-typegen
+*/
 
 export enum Collections {
-	Absentees = "absentees",
+	Absents = "absents",
 	Dispensations = "dispensations",
 	Parents = "parents",
 	PicketSchedules = "picket_schedules",
@@ -30,13 +17,34 @@ export enum Collections {
 	Users = "users",
 }
 
-export type AbsenteesRecord = {
+// Alias types for improved usability
+export type IsoDateString = string
+export type RecordIdString = string
+
+// System fields
+export type BaseSystemFields = {
+	id: RecordIdString
+	created: IsoDateString
+	updated: IsoDateString
+	collectionId: string
+	collectionName: Collections
+	expand?: { [key: string]: any }
+}
+
+export type AuthSystemFields = {
+	email: string
+	emailVisibility: boolean
+	username: string
+	verified: boolean
+} & BaseSystemFields
+
+// Record types for each collection
+
+export type AbsentsRecord = {
 	student_id: RecordIdString
 	time_arrived: IsoDateString
 	description?: string
 }
-
-export type AbsenteesResponse = AbsenteesRecord & BaseRecord
 
 export type DispensationsRecord = {
 	student_id: RecordIdString
@@ -46,8 +54,6 @@ export type DispensationsRecord = {
 	time_end?: IsoDateString
 }
 
-export type DispensationsResponse = DispensationsRecord & BaseRecord
-
 export type ParentsRecord = {
 	user_id: RecordIdString
 	student_id: RecordIdString
@@ -55,44 +61,46 @@ export type ParentsRecord = {
 	phone_number?: string
 }
 
-export type ParentsResponse = ParentsRecord & BaseRecord
-
 export type PicketSchedulesRecord = {
 	picket_session_id: RecordIdString
 	teacher_id: RecordIdString
 }
 
-export type PicketSchedulesResponse = PicketSchedulesRecord & BaseRecord
-
-export type PicketSessionsRecord = {
-	day: "Mon" | "Tue" | "Wed" | "Thu" | "Fri" | "Sat" | "Sun"
-	time_start: IsoDateString
-	time_end: IsoDateString
+export enum PicketSessionsDayOptions {
+	Mon = "Mon",
+	Tue = "Tue",
+	Wed = "Wed",
+	Thu = "Thu",
+	Fri = "Fri",
+	Sat = "Sat",
+	Sun = "Sun",
 }
-
-export type PicketSessionsResponse = PicketSessionsRecord & BaseRecord
+export type PicketSessionsRecord = {
+	day: PicketSessionsDayOptions
+	time_start: string
+	time_end: string
+}
 
 export type RolesRecord = {
 	name: string
 }
 
-export type RolesResponse = RolesRecord & BaseRecord
-
+export enum SchoolClassesGradeOptions {
+	X = "X",
+	XI = "XI",
+	XII = "XII",
+}
 export type SchoolClassesRecord = {
-	grade: "10" | "11" | "12"
+	grade: SchoolClassesGradeOptions
 	specialty_id: RecordIdString
 	number: number
 	teacher_id?: RecordIdString
 }
 
-export type SchoolClassesResponse = SchoolClassesRecord & BaseRecord
-
 export type SchoolYearsRecord = {
 	year_start: number
 	year_end: number
 }
-
-export type SchoolYearsResponse = SchoolYearsRecord & BaseRecord
 
 export type SpecialtiesRecord = {
 	name: string
@@ -100,33 +108,43 @@ export type SpecialtiesRecord = {
 	desc?: string
 }
 
-export type SpecialtiesResponse = SpecialtiesRecord & BaseRecord
-
+export enum StudentsGenderOptions {
+	Male = "Male",
+	Female = "Female",
+}
 export type StudentsRecord = {
 	user_id: RecordIdString
-	name: string
-	gender: "Male" | "Female"
+	gender: StudentsGenderOptions
 	school_class_id: RecordIdString
+	name: string
 }
-
-export type StudentsResponse = StudentsRecord & BaseRecord
 
 export type TeachersRecord = {
 	user_id: RecordIdString
+	name: string
 }
 
-export type TeachersResponse = TeachersRecord & BaseRecord
-
 export type UsersRecord = {
-	name?: string
 	avatar?: string
 	role_id: RecordIdString
 }
 
-export type UsersResponse = UsersRecord & BaseRecord
+// Response types include system fields and match responses from the PocketBase API
+export type AbsentsResponse = AbsentsRecord & BaseSystemFields
+export type DispensationsResponse = DispensationsRecord & BaseSystemFields
+export type ParentsResponse = ParentsRecord & BaseSystemFields
+export type PicketSchedulesResponse = PicketSchedulesRecord & BaseSystemFields
+export type PicketSessionsResponse = PicketSessionsRecord & BaseSystemFields
+export type RolesResponse = RolesRecord & BaseSystemFields
+export type SchoolClassesResponse = SchoolClassesRecord & BaseSystemFields
+export type SchoolYearsResponse = SchoolYearsRecord & BaseSystemFields
+export type SpecialtiesResponse = SpecialtiesRecord & BaseSystemFields
+export type StudentsResponse = StudentsRecord & BaseSystemFields
+export type TeachersResponse = TeachersRecord & BaseSystemFields
+export type UsersResponse = UsersRecord & AuthSystemFields
 
 export type CollectionRecords = {
-	absentees: AbsenteesRecord
+	absents: AbsentsRecord
 	dispensations: DispensationsRecord
 	parents: ParentsRecord
 	picket_schedules: PicketSchedulesRecord

@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import { pb } from '@/pocketbase';
+import { onBeforeMount, ref, watch } from 'vue';
 import { useDateFormat } from '@vueuse/shared';
+import { pb } from '@/pocketbase';
 import type { Record } from 'pocketbase';
-import { ref, watch } from 'vue';
 
 interface ScheduleChoice {
   value: string,
@@ -10,7 +10,7 @@ interface ScheduleChoice {
 }
 
 const isLoading = ref(false);
-const schedules = ref<Record[] | null>(null);
+const sessions = ref<Record[] | null>(null);
 const selectedDayIndex = ref(0);
 const days: ScheduleChoice[] = [
   {
@@ -50,8 +50,7 @@ const days: ScheduleChoice[] = [
 watch(selectedDayIndex, async () => {
   isLoading.value = true;
 
-  const data = await getSchedules();
-  schedules.value = data;
+  sessions.value = await getSchedules();
 
   isLoading.value = false;
 })
@@ -84,16 +83,16 @@ async function getSchedules() {
     day = useDateFormat(date, "ddd").value;
   }
 
-  const sessions = await
+  const sessionRecords = await
     pb.collection('picket_sessions')
       .getList(1, 50, {
         filter: `day = "${day}"`
       });
   
-  if(!sessions.totalItems) return [];
+  if(!sessionRecords.totalItems) return [];
 
   let filterRule = '';
-  sessions.items.forEach((session, index) => {
+  sessionRecords.items.forEach((session, index) => {
     filterRule += `${index === 0 ? '' : '|| '} picket_session_id = "${session.id}" `;
   });
 
@@ -101,11 +100,30 @@ async function getSchedules() {
     pb.collection('picket_schedules')
       .getList(1, 50,  {
         filter: filterRule,
-        expand: 'picket_session_id,teacher_id'
+        expand: 'picket_session_id,teacher_id.user_id'
       });
 
-  return schedules.items;
+  const sessions = sessionRecords.items.map(session => {
+    const sessionSchedules = schedules.items.filter((schedule) => {
+      return schedule.picket_session_id === session.id
+    });
+
+    return {
+      ...session,
+      schedules: sessionSchedules
+    }
+  }) as unknown as Record[];
+
+  return sessions;
 }
+
+const getUrl = async (record: Record, filename: string) => {
+  return await pb.getFileUrl(record, filename)
+}
+
+onBeforeMount(async () => {
+  sessions.value = await getSchedules();
+});
 </script>
 
 <template>
@@ -135,20 +153,24 @@ async function getSchedules() {
       </button>
     </nav>
 
-    <article v-if="!isLoading && schedules">
-      <table class="border">
-        <thead>
-          <tr>
-            <th>Nama Guru</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr v-for="schedule in schedules">
-            <td>{{ schedule.expand.teacher_id.name }}</td>
-          </tr>
-        </tbody>
-      </table>
-    </article>
+    <template v-if="!isLoading && sessions">
+      <template v-for="session in sessions">
+        <article v-if="session.schedules.length">
+          <h5>{{ session.time_start }} - {{ session.time_end }}</h5>
+
+          <article v-for="schedule in session.schedules" class="no-padding">
+            <img class="responsive medium" 
+              src="#"
+            >
+            <div class="absolute bottom left right padding bottom-shadow white-text">
+              <nav>
+                <h5>{{ schedule.expand.teacher_id.name }}</h5>
+              </nav>
+            </div>
+          </article>
+        </article>
+      </template>
+    </template>
 
     <a v-else-if="isLoading" class="loader medium"></a>
   </main>
